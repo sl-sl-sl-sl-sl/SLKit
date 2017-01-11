@@ -61,44 +61,42 @@ open class SLTimingTask: NSObject {
 
 open class SLTimingManager: NSObject {
     
-    private static let shareManager = SLTimingManager()
+    public static let shareManager = SLTimingManager()
     private lazy var tasks = [String : SLTimingTask]()
+    private let syncSemaphore = DispatchSemaphore.init(value: 1)
     
-    private let syncQueue = DispatchQueue.init(label: "com.sltimingmanager.syncqueue", attributes: DispatchQueue.Attributes.concurrent)
-    
-    open func currentTasks() -> [String]? {
-        var localTasks: [String : SLTimingTask]?
-        syncQueue.async {
-            localTasks = self.tasks
-        }
-        guard let lt = localTasks else {
-            return nil
-        }
-        return Array(lt.keys)
+    open func currentTasksIDs() -> [String]? {
+        var tasksIDs: [String]?
+        syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        tasksIDs = Array(self.tasks.keys)
+        syncSemaphore.signal()
+        return tasksIDs
     }
     
     open func addTask(_ task: SLTimingTask) {
-        syncQueue.async(flags: .barrier, execute: {
-            self.tasks[task.identifier] = task
-            task.resume()
-        })
+        syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        self.tasks[task.identifier] = task
+        task.resume()
+        syncSemaphore.signal()
     }
     
     open func getTask(_ identifier: String) -> SLTimingTask? {
         var localTask: SLTimingTask?
-        syncQueue.async {
-            localTask = self.tasks[identifier]
-        }
+        syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        localTask = self.tasks[identifier]
+        syncSemaphore.signal()
         return localTask
     }
     
     open func cancelTask(_ identifier: String) {
-        guard let task = self.getTask(identifier) else {
-            print("\(self) do not exist this task \(identifier)")
-            return
+        syncSemaphore.wait(timeout: DispatchTime.distantFuture)
+        guard let task = self.tasks[identifier] else {
+            syncSemaphore.signal()
+            return;
         }
         task.cancel()
         self.tasks[identifier] = nil
+        syncSemaphore.signal()
     }
     
     open static func addTask(_ task: SLTimingTask) {
