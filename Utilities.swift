@@ -16,7 +16,7 @@ public func prettyFunction(file:String = #file, function:String = #function, lin
 
 // MARK: - Transformation
 public final class TypeTransform<T, M> {
-    public static func transform(i:T?) -> M? {
+    public static func transform(_ i:T?) -> M? {
         guard let t = i else {
             return nil
         }

@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 	s.summary		= 'SLKit'
 	s.homepage		= 'http://iqiqi.space'
 	s.authors		= { 'SL' => 'sl@52772577.com' }
-	s.source		= {:git => 'git@github.com:sl/sl.git'}
+	s.source		= {:git => 'git@github.com:sl-sl-sl-sl-sl/SLKit.git'}
 	s.license		= 'GPL'
 
 	s.pod_target_xcconfig = {
