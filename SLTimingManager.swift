@@ -65,7 +65,7 @@ open class SLTimingManager: NSObject {
     private lazy var tasks = [String : SLTimingTask]()
     private let syncSemaphore = DispatchSemaphore.init(value: 1)
     
-    open func currentTasksIDs() -> [String]? {
+    public func currentTasksIDs() -> [String]? {
         var tasksIDs: [String]?
         syncSemaphore.wait(timeout: DispatchTime.distantFuture)
         tasksIDs = Array(self.tasks.keys)

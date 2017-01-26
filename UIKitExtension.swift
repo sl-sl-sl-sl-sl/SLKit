@@ -10,7 +10,7 @@ import UIKit
 
 public extension UIResponder {
     
-    open func nearestResponder(`class`: AnyClass) -> UIResponder?{
+    public func nearestResponder(`class`: AnyClass) -> UIResponder?{
         var responder: UIResponder? = self.next
         while responder != nil {
             if responder!.isKind(of: `class`) {
@@ -21,21 +21,21 @@ public extension UIResponder {
         return nil
     }
     
-    open func nearestViewController() -> UIViewController? {
+    public func nearestViewController() -> UIViewController? {
         return self.nearestResponder(class: UIViewController.classForCoder()) as! UIViewController?
     }
 
-    open func nearestNavigationController() -> UINavigationController? {
+    public func nearestNavigationController() -> UINavigationController? {
         return self.nearestResponder(class: UINavigationController.classForCoder()) as! UINavigationController?
     }
 }
 
 public extension UIColor {
-    open static func random() -> UIColor {
+    public static func random() -> UIColor {
         return UIColor.init(red: CGFloat(Double((0...255).random()))/255, green: CGFloat(Double((0...255).random()))/255, blue: CGFloat(Double((0...255).random()))/255, alpha: 1)
     }
     
-    open convenience init(Hex: String) {
+    public convenience init(Hex: String) {
         var colorStr = Hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let length = colorStr.lengthOfBytes(using: .utf8)
         if length >= 8 {
@@ -56,7 +56,7 @@ public extension UIColor {
         }
     }
     
-    open convenience init(Hex: String, alpha: CGFloat) {
+    public convenience init(Hex: String, alpha: CGFloat) {
         var colorString = Hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         if colorString.lengthOfBytes(using: .utf8) > 6 {
             colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6))
@@ -77,3 +77,37 @@ public extension UIColor {
         }
     }
 }
+
+public extension UIApplication {
+    private func applicationStatusBar() -> UIView {
+        let privateKey = ["_", "status", "Bar"]
+        return self.value(forKey: privateKey.joined()) as! UIView
+    }
+    
+    public func fadeInStatusBar(animation: Bool = true) {
+        let statusBar = self.applicationStatusBar()
+        if animation {
+            UIView.animate(withDuration: 0.25, animations: { 
+                statusBar.alpha = 1;
+            })
+        } else {
+            statusBar.alpha = 1;
+        }
+    }
+    
+    public func fadeOutStatusBar(animation: Bool = true) {
+        let statusBar = self.applicationStatusBar()
+        if animation {
+            UIView.animate(withDuration: 0.25, animations: { 
+                statusBar.alpha = 0;
+            })
+        } else {
+            statusBar.alpha = 0;
+        }
+    }
+}
+
+
+
+
+
