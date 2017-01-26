@@ -84,7 +84,7 @@ public extension UIApplication {
         return self.value(forKey: privateKey.joined()) as! UIView
     }
     
-    public func fadeInStatusBar(animation: Bool = true) {
+    public func showStatusBar(animation: Bool = true) {
         let statusBar = self.applicationStatusBar()
         if animation {
             UIView.animate(withDuration: 0.25, animations: { 
@@ -95,7 +95,7 @@ public extension UIApplication {
         }
     }
     
-    public func fadeOutStatusBar(animation: Bool = true) {
+    public func hideStatusBar(animation: Bool = true) {
         let statusBar = self.applicationStatusBar()
         if animation {
             UIView.animate(withDuration: 0.25, animations: { 
