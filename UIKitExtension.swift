@@ -35,29 +35,41 @@ public extension UIColor {
         return UIColor.init(red: CGFloat(Double((0...255).random()))/255, green: CGFloat(Double((0...255).random()))/255, blue: CGFloat(Double((0...255).random()))/255, alpha: 1)
     }
     
-    public convenience init(Hex: String) {
+    private static func filter(Hex: String) -> String {
         var colorStr = Hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-        let length = colorStr.lengthOfBytes(using: .utf8)
+        if colorStr.hasPrefix("#") {
+            colorStr = colorStr.replacingOccurrences(of: "#", with: "")
+        } else if colorStr.hasPrefix("0x") {
+            colorStr = colorStr.replacingOccurrences(of: "0x", with: "")
+        } else if colorStr.hasPrefix("0X") {
+            colorStr = colorStr.replacingOccurrences(of: "0X", with: "")
+        }
+        return colorStr
+    }
+    
+    public convenience init(Hex: String) {
+        var colorString = UIColor.filter(Hex: Hex)
+        let length = colorString.lengthOfBytes(using: .utf8)
         if length >= 8 {
-            colorStr = colorStr.substring(to: colorStr.index(colorStr.startIndex, offsetBy: 8))
-            let scanner = Scanner(string: colorStr)
+            colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 8))
+            let scanner = Scanner(string: colorString)
             var hexNumber: UInt64 = 0
             if scanner.scanHexInt64(&hexNumber) {
                 let alpha = CGFloat(hexNumber & 0x000000ff)/255
-                self.init(Hex:colorStr.substring(to: colorStr.index(colorStr.startIndex, offsetBy: 6)), alpha: alpha)
+                self.init(Hex:colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6)), alpha: alpha)
             } else {
                 self.init(red: 0, green: 0, blue: 0, alpha: 1)
             }
         } else if length >= 6 {
-            colorStr = colorStr.substring(to: colorStr.index(colorStr.startIndex, offsetBy: 6))
-            self.init(Hex:colorStr, alpha:1)
+            colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6))
+            self.init(Hex:colorString, alpha:1)
         } else {
             self.init(red: 0, green: 0, blue: 0, alpha: 1)
         }
     }
     
     public convenience init(Hex: String, alpha: CGFloat) {
-        var colorString = Hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        var colorString = UIColor.filter(Hex: Hex)
         if colorString.lengthOfBytes(using: .utf8) > 6 {
             colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6))
         }
