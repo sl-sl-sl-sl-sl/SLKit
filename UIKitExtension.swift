@@ -1,3 +1,5 @@
+import UIKit
+
 //
 //  UIKit.swift
 //  WeicoSL
@@ -24,7 +26,7 @@ public extension UIResponder {
     public func nearestViewController() -> UIViewController? {
         return self.nearestResponder(class: UIViewController.classForCoder()) as! UIViewController?
     }
-
+    
     public func nearestNavigationController() -> UINavigationController? {
         return self.nearestResponder(class: UINavigationController.classForCoder()) as! UINavigationController?
     }
@@ -50,17 +52,16 @@ public extension UIColor {
     public convenience init(Hex: String) {
         var colorString = UIColor.filter(Hex: Hex)
         let length = colorString.lengthOfBytes(using: .utf8)
-        if length >= 8 {
-            colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 8))
+        if length == 8 {
             let scanner = Scanner(string: colorString)
             var hexNumber: UInt64 = 0
             if scanner.scanHexInt64(&hexNumber) {
-                let alpha = CGFloat(hexNumber & 0x000000ff)/255
-                self.init(Hex:colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6)), alpha: alpha)
+                let alpha = CGFloat((hexNumber & 0xff000000) >> 24)/255
+                self.init(Hex:colorString.substring(from: colorString.index(colorString.startIndex, offsetBy: 2)), alpha: alpha)
             } else {
                 self.init(red: 0, green: 0, blue: 0, alpha: 1)
             }
-        } else if length >= 6 {
+        } else if length == 6 {
             colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6))
             self.init(Hex:colorString, alpha:1)
         } else {
@@ -69,10 +70,7 @@ public extension UIColor {
     }
     
     public convenience init(Hex: String, alpha: CGFloat) {
-        var colorString = UIColor.filter(Hex: Hex)
-        if colorString.lengthOfBytes(using: .utf8) > 6 {
-            colorString = colorString.substring(to: colorString.index(colorString.startIndex, offsetBy: 6))
-        }
+        let colorString = UIColor.filter(Hex: Hex)
         if colorString.lengthOfBytes(using: .utf8) == 6 {
             let scanner = Scanner(string: Hex)
             var hexNumber: UInt64 = 0
@@ -99,7 +97,7 @@ public extension UIApplication {
     public func showStatusBar(_ animation: Bool = true) {
         let statusBar = self.applicationStatusBar()
         if animation {
-            UIView.animate(withDuration: 0.25, animations: { 
+            UIView.animate(withDuration: 0.25, animations: {
                 statusBar.alpha = 1;
             })
         } else {
@@ -110,7 +108,7 @@ public extension UIApplication {
     public func hideStatusBar(_ animation: Bool = true) {
         let statusBar = self.applicationStatusBar()
         if animation {
-            UIView.animate(withDuration: 0.25, animations: { 
+            UIView.animate(withDuration: 0.25, animations: {
                 statusBar.alpha = 0;
             })
         } else {
